@@ -8,15 +8,18 @@ import java.util.ArrayList;
 /* Date started: 10/19/16
  * 
  * Currently working on:
- * newSet() which is supposed to allow me to generate
- * new pools of pokemon for different game modes. I am using the original
- * list of pokemon and their moves as a standard for these files.
+ * Nothing! newSet() is done!
+ * 
+ * Warnings:
+ * Set the static path variable to your project folder.
  * 
  * Ideas for the future:
  * Trimming the standard files so they don't have retarded data. (worth while?)
  */
 
 public abstract class SetManager {
+	
+	static String path = "C:/Users/Micha/Documents/Jafa/Pokemon/";
 	
 	public static String truncate(String path) {
 		String line = "";
@@ -34,9 +37,9 @@ public abstract class SetManager {
 					System.out.println("broke at " + counter + "\nv this line is lying!!! v");
 					break;
 				} else {
-					BW.write(line.substring(1) + "/n");
+					BW.write(line.substring(1) + System.lineSeparator());
 				}
-				counter ++;
+				counter++;
 			}
 			
 			System.out.println("Truncate Successful!");
@@ -51,7 +54,7 @@ public abstract class SetManager {
 	
 	public static void newSet(String p, String name) {
 
-		String path = "C:/Users/Micha/Documents/Jafa/Pokemon/text/";
+		String path = SetManager.path + "sets/";
 		path = path + name + ".txt";
 		String line = "";
 		ArrayList<String> mistakes = new ArrayList<String>();
@@ -67,28 +70,27 @@ public abstract class SetManager {
 			String pokemon;
 			String left = "in";
 			String right = "out";
-			String in;
+			String in; //input
 			
 			while(line != null) {
 				line = BR.readLine();
-				
-				if(line.substring(1) == "\t" || line.substring(1) == "}") {		//finds pokemon names
+				if(line.substring(0,1).equals("\t") || line.substring(0,1).equals("}")) {		//finds pokemon names
 					continue;
 				} else {
-					pokemon = line;
+					pokemon = line.substring(0,line.length()-3);
 				}
-				
-				System.out.print(left);								//im slick
-				for(int i=0; i < left.length()/8 + 1; i++) {
+				System.out.print(left);
+				for(int i=0; i < 2 - left.length()/8; i++) {		//im slick
 					System.out.print("\t");
 				}
 				System.out.print(right);
-				for(int i=0; i < right.length()/8 + 1; i++) {
+				for(int i=0; i < 2 - right.length()/8; i++) {
 					System.out.print("\t");
 				}
-				System.out.println(pokemon);
+				System.out.print(pokemon);
 				
 				in = input.readLine();
+				//System.out.println();
 				
 				if(in.equals("w"))
 					mistakes.add(pokemon);
@@ -97,26 +99,27 @@ public abstract class SetManager {
 				
 				case "a":
 					left = pokemon;
-					right = "";
-					while(line.substring(1) != "}") {
-						 BW.write(line + "/n");
+					right = " ";
+					while(!line.substring(0,1).equals("}")) {
+						 BW.write(line + System.lineSeparator());
 						 line = BR.readLine();
 					}
-					BW.write(line);
+					BW.write(line + System.lineSeparator());
 					break;
 					
 				case "d":
-					left = "";
+					left = " ";
 					right = pokemon;
 					line = BR.readLine();
 					break;
 					
 				default:
-					System.out.println("a = in/nd = out/nw = mistake");
+					System.out.println("a = in\nd = out\nw = mistake");
 					break;
 				}
-				
 			}
+			BW.close();
+			BR.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -124,7 +127,7 @@ public abstract class SetManager {
 	}
 	
 	public static void main(String args[]) {
-		String original = "C:/Users/Micha/Documents/Jafa/Pokemon/text/Pokemon.txt";
+		String original = SetManager.path + "sets/Pokemon.txt";
 		String orig = SetManager.truncate(original); //drops the first line of tabs
 		SetManager.newSet(orig,"Randoms");
 		
