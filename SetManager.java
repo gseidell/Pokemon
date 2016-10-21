@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /* Date started: 10/19/16
  * 
  * Currently working on:
- * Nothing! newSet() is done!
+ * Pokemon class & convert()
  * 
  * Warnings:
  * Set the static path variable to your project folder.
@@ -52,8 +52,8 @@ public abstract class SetManager {
 		return p;
 	}
 	
+	//generates a preliminary text file for the set of allowed mons in a game mode
 	public static void newSet(String p, String name) {
-
 		String path = SetManager.path + "sets/";
 		path = path + name + ".txt";
 		String line = "";
@@ -126,10 +126,34 @@ public abstract class SetManager {
 		
 	}
 	
+	public static ArrayList<Pokemon> convert(String mode) {
+		String path = SetManager.path + "sets/";
+		path = path + mode + ".txt";
+		String line = "";
+		ArrayList<Pokemon> pokemon = new ArrayList<Pokemon>();
+		
+		try {
+			FileReader FR = new FileReader(path);
+			BufferedReader BR = new BufferedReader(FR);
+			
+			while(line != null) {
+				line = BR.readLine();
+				if(line.substring(0,1) != "\t" || line.substring(0,1) != "}") {
+					Pokemon temp = new Pokemon(line.substring(0,line.length()-3));
+					
+					while(line.substring(0,6) != "randomB") { //finds the randomBattleMoves
+						line = BR.readLine();
+					}
+					
+					
+				}
+			}
+		}
+	}
+	
 	public static void main(String args[]) {
 		String original = SetManager.path + "sets/Pokemon.txt";
 		String orig = SetManager.truncate(original); //drops the first line of tabs
 		SetManager.newSet(orig,"Randoms");
-		
 	}
 }
