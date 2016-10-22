@@ -19,25 +19,27 @@ import java.util.ArrayList;
 
 public abstract class SetManager {
 	
-	static String path = "C:/Users/Micha/Documents/Jafa/Pokemon/";
+	static String path = "C:/Users/Micha/Documents/Jafa/Pokemon/sets/";
 	
-	public static String truncate(String path) {
+	public static String truncate(String name) {
+		String readPath = SetManager.path + name + ".txt";
+		String writePath = readPath.substring(0, readPath.length() - 4) + "2" + ".txt";
 		String line = "";
-		String p = path.substring(0, path.length()-4) + "2" + ".txt";
 		int counter = 0;
 		try {
-			FileReader FR = new FileReader(path);
+			FileReader FR = new FileReader(readPath);
 			BufferedReader BR = new BufferedReader(FR);
-			FileWriter FW = new FileWriter(p);
+			FileWriter FW = new FileWriter(writePath);
 			BufferedWriter BW = new BufferedWriter(FW);
 			
 			while((line = BR.readLine()) != null) {
 				if(!line.subSequence(0, 1).equals("\t")) {
-					System.out.println("Could not truncate!\n" + p + " is corrupt!");
+					System.out.println("Could not truncate!\n" + writePath + " is corrupt!");
 					System.out.println("broke at " + counter + "\nv this line is lying!!! v");
 					break;
 				} else {
-					BW.write(line.substring(1) + System.lineSeparator());
+					BW.write(line.substring(1));
+					BW.newLine();
 				}
 				counter++;
 			}
@@ -49,13 +51,12 @@ public abstract class SetManager {
 			System.out.println(e);
 		}
 		
-		return p;
+		return writePath;
 	}
 	
 	//generates a preliminary text file for the set of allowed mons in a game mode
-	public static void newSet(String p, String name) {
-		String path = SetManager.path + "sets/";
-		path = path + name + ".txt";
+	public static String newSet(String p, String name) {
+		String path = SetManager.path + name + ".txt";
 		String line = "";
 		ArrayList<String> mistakes = new ArrayList<String>();
 		
@@ -97,24 +98,23 @@ public abstract class SetManager {
 
 				switch(in) {
 				
-				case "a":
-					left = pokemon;
-					right = " ";
-					while(!line.substring(0,1).equals("}")) {
-						 BW.write(line + System.lineSeparator());
-						 line = BR.readLine();
-					}
-					BW.write(line + System.lineSeparator());
-					break;
-					
 				case "d":
 					left = " ";
 					right = pokemon;
 					line = BR.readLine();
 					break;
-					
+				
 				default:
-					System.out.println("a = in\nd = out\nw = mistake");
+					left = pokemon;
+					right = " ";
+					do {
+						System.out.println(line);
+						BW.write(line);
+						BW.newLine();
+						line = BR.readLine();
+					} while(line.substring(0,1).equals("}")
+						 || line.substring(0,1).equals("\t"));
+					
 					break;
 				}
 			}
@@ -124,11 +124,12 @@ public abstract class SetManager {
 			e.printStackTrace();
 		}
 		
+		return path;
+		
 	}
 	
 	public static ArrayList<Pokemon> convert(String mode) {
-		String path = SetManager.path + "sets/";
-		path = path + mode + ".txt";
+		String path = SetManager.path + mode + ".txt";
 		String line = "";
 		ArrayList<Pokemon> pokemon = new ArrayList<Pokemon>();
 		
@@ -148,12 +149,15 @@ public abstract class SetManager {
 					
 				}
 			}
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
+		return pokemon;
 	}
 	
 	public static void main(String args[]) {
-		String original = SetManager.path + "sets/Pokemon.txt";
+		String original = "Pokedex";
 		String orig = SetManager.truncate(original); //drops the first line of tabs
-		SetManager.newSet(orig,"Randoms");
+		String randoms = SetManager.newSet(orig,"Randoms");
 	}
 }
